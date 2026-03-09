@@ -1,0 +1,155 @@
+*{
+box-sizing:border-box;
+font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;
+}
+
+body{
+margin:100;
+background:linear-gradient(135deg,#eaecf6,#cb99ec);
+}
+
+/* PAGE CENTER */
+
+.page{
+min-height:80vh;
+display:flex;
+justify-content:center;
+align-items:flex-start;   /* change this */
+padding-top:20px;         /* controls top spacing */
+padding-left:300px;
+padding-right:60px;
+}
+
+/* FORM BOX */
+
+.form-box{
+width:100%;
+max-width:1100px;
+background:#f3eded;
+padding:20px;
+border-radius:18px;
+box-shadow:0 20px 60px rgba(0,0,0,0.15);
+margin:auto;
+}
+/* TITLE */
+
+.form-box h1{
+text-align:center;
+margin-bottom:5px;
+font-size:60px;
+color:#333;
+}
+
+.subtitle{
+text-align:center;
+color:#0a0909;
+margin-bottom:30px;
+}
+
+/* SECTION GRID */
+
+.section{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:18px;
+margin-bottom:25px;
+}
+
+/* SECTION TITLE */
+
+.section h3{
+grid-column:span 3;
+border-left:4px solid #cad3f8;
+padding-left:10px;
+margin-bottom:5px;
+}
+
+/* INPUT FIELDS */
+
+input,
+select,
+textarea{
+width:100%;
+padding:14px;
+border-radius:8px;
+border:1px solid #ddd;
+font-size:14px;
+background:#f9f9f9;
+transition:0.25s;
+}
+
+/* ADDRESS FULL WIDTH */
+
+textarea{
+grid-column:span 3;
+resize:none;
+height:80px;
+}
+
+/* INPUT FOCUS */
+
+input:focus,
+select:focus,
+textarea:focus{
+outline:none;
+border-color:#eeeff4;
+background:white;
+box-shadow:0 0 6px rgba(244, 244, 245, 0.4);
+}
+
+/* SUBMIT BUTTON */
+
+.submit-btn{
+width:100%;
+margin-top:20px;
+padding:15px;
+border:none;
+border-radius:10px;
+background:linear-gradient(135deg,#81a5ed,#6f5af7);
+color:white;
+font-size:16px;
+font-weight:600;
+cursor:pointer;
+transition:0.3s;
+}
+
+.submit-btn:hover{
+transform:translateY(-2px);
+box-shadow:0 10px 20px rgba(0,0,0,0.25);
+}
+
+/* TABLET */
+
+@media(max-width:900px){
+
+.section{
+grid-template-columns:1fr 1fr;
+}
+
+.section h3{
+grid-column:span 2;
+}
+
+textarea{
+grid-column:span 2;
+}
+
+}
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+.section{
+grid-template-columns:1fr;
+}
+
+.section h3{
+grid-column:span 1;
+}
+
+textarea{
+grid-column:span 1;
+}
+
+}
