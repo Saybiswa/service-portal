@@ -27,29 +27,94 @@ const productTypes:any = {
 "Washing Machine":[
 "Semi Automatic",
 "Top Load",
-"Front Load"
+"Front load",
+"Front Load with Dryer",
+"Twin wash (front)",
+"Twin wash (Top)",
+"Dishwasher",
+"Dryer"
 ],
 
 "Refrigerator":[
-"Single Door",
-"Double Door",
-"Side by Side"
+"Direct Cool (Single Door)",
+"Upto 300 Ltr (double)",
+"301 to 400 Ltr (double)",
+"401 to 500 Ltr (double)",
+"Above 500 Ltr (double)",
+"DIOS SXS",
+"Insta View"
 ],
 
-"AC":[
-"Split AC",
-"Window AC"
+"Air conditioner":[
+"Split AC (Inverter Model)(1 Ton)",
+"Split AC (Inverter Model)(1.5 Ton)",
+"Split AC (Inverter Model)(2 Ton)",
+"Split AC (Non Inverter)(1 Ton)",
+"Split AC (Non Inverter)(1.5 Ton)",
+"Split AC (Non Inverter)(2 Ton)",
+"Window (1 Ton)",
+"Window (1.5 Ton)",
+"Window (2 Ton)",
+"Tower",
+"Art cool",
+"Multi Split/Floor Standing"
 ],
 
 "TV":[
-"LED",
-"Smart TV"
+"UP TO 25 LED/CRT",
+"26 to 28 LED",
+"32 TV UHD/FHD/HD",
+"43 TV UHD/FHD/HD",
+"50 TV UHD/FHD/HD",
+"55 TV UHD/FHD/HD",
+"65 TV UHD/FHD/HD",
+"70 TV UHD/FHD/HD",
+"75 TV UHD/FHD/HD",
+"86 TV UHD/FHD/HD"
+],
+
+"Microwave":[
+"SOLO",
+"GRILL",
+"CONVECTION UPTO 28L",
+"CONVECTION 32L"
 ],
 
 "Water Purifier":[
-"RO",
-"UV",
-"RO + UV"
+"Basic RO",
+"RO+UF",
+"RO+UF+UV",
+"Hot and Cold",
+"Non-RO",
+"RO+UV"
+],
+
+"Monitor":[
+"16 Monitor",
+"19 Monitor",
+"20 Monitor",
+"22 Monitor",
+"23 Monitor",
+"24 Monitor",
+"27 Monitor",
+"32 Monitor"
+],
+
+"Audio Video":[
+"Home Theatre",
+"Sound Bar",
+"Audio System",
+"DVD Player/Blu Ray Disc Player",
+"Wireless Speaker",
+"Portable Speaker",
+"X-Boom / DJ System"
+],
+
+"Air Cleaner":[
+"Air Cleaner (AS40GWWK0)",
+"Air Cleaner (AS60GDWT0)",
+"Air Cleaner (AS95GDWT0)",
+"Wearable Mask"
 ]
 
 };
@@ -73,6 +138,9 @@ if(
 !form.customer_name ||
 !form.phone1 ||
 !form.phone2 ||
+!form.state ||
+!form.city ||
+!form.locality ||
 !form.address ||
 !form.product ||
 !form.product_type ||
@@ -174,22 +242,25 @@ onChange={handleChange}
 <input
 name="state"
 value={form.state}
-placeholder="State"
+placeholder="State *"
 onChange={handleChange}
+required
 />
 
 <input
 name="city"
 value={form.city}
-placeholder="City"
+placeholder="City *"
 onChange={handleChange}
+required
 />
 
 <input
 name="locality"
 value={form.locality}
-placeholder="Locality"
+placeholder="Locality *"
 onChange={handleChange}
+required
 />
 
 <textarea
@@ -218,9 +289,13 @@ required
 <option value="">Select Product *</option>
 <option value="Washing Machine">Washing Machine</option>
 <option value="Refrigerator">Refrigerator</option>
-<option value="AC">AC</option>
+<option value="Air conditioner">Air conditioner</option>
 <option value="TV">TV</option>
+<option value="Microwave">Microwave</option>
 <option value="Water Purifier">Water Purifier</option>
+<option value="Air Cleaner">Air Cleaner</option>
+<option value="Monitor">Monitor</option>
+<option value="Audio Video">Audio Video</option>
 
 </select>
 
