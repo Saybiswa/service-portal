@@ -152,7 +152,10 @@ return;
 
 try {
 
-await axios.post("http://localhost:5000/api/customer", form);
+await axios.post(
+"https://service-portal-api.onrender.com/api/customer",
+form
+);
 
 alert("Customer Registered Successfully 🎉");
 
