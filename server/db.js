@@ -2,7 +2,8 @@ import pkg from "pg";
 const { Pool } = pkg;
 
 const pool = new Pool({
-  connectionString: "postgresql://postgres:Admin123@localhost:5432/product_registration",
+  connectionString: process.env.DATABASE_URL,
+  ssl: false
 });
 
 export default pool;
