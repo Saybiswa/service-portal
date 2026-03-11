@@ -1,4 +1,3 @@
-// CustomerForm.tsx
 import { useState } from "react";
 import axios from "axios";
 import "./CustomerForm.css";
@@ -52,7 +51,6 @@ const CustomerForm = () => {
       await axios.post("https://service-portal-api.onrender.com/api/customer", form, { withCredentials: true });
       alert("Customer Registered Successfully 🎉");
 
-      // Reset form
       setForm({
         customer_name: "",
         phone1: "",
@@ -81,61 +79,118 @@ const CustomerForm = () => {
     <div className="page">
       <div className="form-box">
         <h1>Customer Service Request Registration</h1>
-        <p className="subtitle">Fill Up The Details</p>
+        
 
         <form onSubmit={handleSubmit}>
+          
           {/* Customer Details */}
           <div className="section">
             <h3>Customer Details</h3>
-            <input name="customer_name" value={form.customer_name} placeholder="Customer Name *" onChange={handleChange} required />
-            <input name="phone1" value={form.phone1} placeholder="Phone Number 1 *" onChange={handleChange} required />
-            <input name="phone2" value={form.phone2} placeholder="Phone Number 2 *" onChange={handleChange} required />
-            <input name="email" value={form.email} placeholder="Customer Email ID" onChange={handleChange} />
+
+            <div className="input-row">
+              <label>Customer Name <span className="required">*</span></label>
+              <input name="customer_name" value={form.customer_name} onChange={handleChange} />
+            </div>
+
+            <div className="input-row">
+              <label>Phone Number 1 <span className="required">*</span></label>
+              <input name="phone1" value={form.phone1} onChange={handleChange} />
+            </div>
+
+            <div className="input-row">
+              <label>Phone Number 2 <span className="required">*</span></label>
+              <input name="phone2" value={form.phone2} onChange={handleChange} />
+            </div>
+
+            <div className="input-row">
+              <label>Email</label>
+              <input name="email" value={form.email} onChange={handleChange} />
+            </div>
           </div>
 
-          {/* Address */}
+          {/* Address Details */}
           <div className="section">
             <h3>Address Details</h3>
-            <input name="state" value={form.state} placeholder="State *" onChange={handleChange} required />
-            <input name="city" value={form.city} placeholder="City *" onChange={handleChange} required />
-            <input name="locality" value={form.locality} placeholder="Locality *" onChange={handleChange} required />
-            <textarea name="address" value={form.address} placeholder="Full Address *" onChange={handleChange} required />
+
+            <div className="input-row">
+              <label>State <span className="required">*</span></label>
+              <input name="state" value={form.state} onChange={handleChange} />
+            </div>
+
+            <div className="input-row">
+              <label>City <span className="required">*</span></label>
+              <input name="city" value={form.city} onChange={handleChange} />
+            </div>
+
+            <div className="input-row">
+              <label>Locality <span className="required">*</span></label>
+              <input name="locality" value={form.locality} onChange={handleChange} />
+            </div>
+
+            <div className="input-row">
+              <label>Full Address <span className="required">*</span></label>
+              <textarea name="address" value={form.address} onChange={handleChange}></textarea>
+            </div>
           </div>
 
           {/* Product Details */}
           <div className="section">
             <h3>Product Details</h3>
-            <select name="product" value={form.product} onChange={handleChange} required>
-              <option value="">Select Product *</option>
-              {Object.keys(productTypes).map((prod, idx) => <option key={idx} value={prod}>{prod}</option>)}
-            </select>
 
-            <select name="product_type" value={form.product_type} onChange={handleChange} required>
-              <option value="">Select Product Type *</option>
-              {form.product && productTypes[form.product]?.map((type, idx) => <option key={idx} value={type}>{type}</option>)}
-            </select>
+            <div className="input-row">
+              <label>Product <span className="required">*</span></label>
+              <select name="product" value={form.product} onChange={handleChange}>
+                <option value="">Select Product *</option>
+                {Object.keys(productTypes).map((prod, idx) => <option key={idx} value={prod}>{prod}</option>)}
+              </select>
+            </div>
 
-            <input name="model_number" value={form.model_number} placeholder="Model Number" onChange={handleChange} />
-            <input name="serial_number" value={form.serial_number} placeholder="Serial Number" onChange={handleChange} />
+            <div className="input-row">
+              <label>Product Type <span className="required">*</span></label>
+              <select name="product_type" value={form.product_type} onChange={handleChange}>
+                <option value="">Select Product Type *</option>
+                {form.product && productTypes[form.product]?.map((type, idx) => <option key={idx} value={type}>{type}</option>)}
+              </select>
+            </div>
+
+            <div className="input-row">
+              <label>Model Number</label>
+              <input name="model_number" value={form.model_number} onChange={handleChange} />
+            </div>
+
+            <div className="input-row">
+              <label>Serial Number</label>
+              <input name="serial_number" value={form.serial_number} onChange={handleChange} />
+            </div>
           </div>
 
           {/* Service Details */}
           <div className="section">
             <h3>Service Details</h3>
-            <select name="warranty_status" value={form.warranty_status} onChange={handleChange}>
-              <option value="">Warranty Status</option>
-              <option value="In Warranty">In Warranty</option>
-              <option value="Out of Warranty">Out of Warranty</option>
-            </select>
 
-            <select name="svc_type" value={form.svc_type} onChange={handleChange} required>
-              <option value="">Service Type *</option>
-              <option value="Installation">Installation</option>
-              <option value="Repair">Repair</option>
-              <option value="Maintenance">Maintenance</option>
-            </select>
+            <div className="input-row">
+              <label>Warranty Status</label>
+              <select name="warranty_status" value={form.warranty_status} onChange={handleChange}>
+                <option value="">Select Warranty</option>
+                <option value="In Warranty">In Warranty</option>
+                <option value="Out of Warranty">Out of Warranty</option>
+              </select>
+            </div>
 
-            <textarea name="complaint_issue" value={form.complaint_issue} placeholder="Complaint / Issue" onChange={handleChange} />
+            <div className="input-row">
+              <label>Service Type <span className="required">*</span></label>
+              <select name="svc_type" value={form.svc_type} onChange={handleChange}>
+                <option value="">Select Service</option>
+                <option value="Installation">Installation</option>
+                <option value="Repair">Repair</option>
+                <option value="Maintenance">Maintenance</option>
+              </select>
+            </div>
+
+            <div className="input-row">
+              <label>Complaint / Issue</label>
+              <textarea name="complaint_issue" value={form.complaint_issue} onChange={handleChange}></textarea>
+            </div>
           </div>
 
           <button type="submit" className="submit-btn">Submit</button>
