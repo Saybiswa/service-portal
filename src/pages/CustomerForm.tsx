@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import "./CustomerForm.css";
-
+import api from "../api";
 const CustomerForm = () => {
   const [form, setForm] = useState({
     customer_name: "",
@@ -48,7 +48,7 @@ const CustomerForm = () => {
     }
 
     try {
-      await axios.post("https://service-portal-api.onrender.com/api/customer", form, { withCredentials: true });
+     await api.post("/api/customer", form);
       alert("Customer Registered Successfully 🎉");
 
       setForm({
