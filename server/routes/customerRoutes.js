@@ -52,13 +52,15 @@ router.get("/customers", async (req, res) => {
   }
 });
 
-// DELETE ALL CUSTOMERS
-router.delete("/customers/delete", async (req, res) => {
+router.delete("/customers/delete-old", async (req, res) => {
   try {
-    await pool.query("TRUNCATE TABLE customers RESTART IDENTITY CASCADE");
-    res.json({ message: "All customer data deleted successfully" });
+    const days = 30; // or get from req.query for flexibility
+    const result = await pool.query(
+      `DELETE FROM customers WHERE created_at < NOW() - INTERVAL '${days} days'`
+    );
+    res.json({ message: `Deleted ${result.rowCount} old customers` });
   } catch (err) {
-    console.error("Delete Error:", err);
+    console.error("Delete old data error:", err);
     res.status(500).json({ error: "Delete failed" });
   }
 });
