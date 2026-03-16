@@ -53,7 +53,7 @@ router.get("/customers", async (req, res) => {
 });
 
 // DELETE ALL CUSTOMERS
-router.delete("/customers", async (req, res) => {
+router.delete("/customers/delete", async (req, res) => {
   try {
     await pool.query("TRUNCATE TABLE customers RESTART IDENTITY CASCADE");
     res.json({ message: "All customer data deleted successfully" });
