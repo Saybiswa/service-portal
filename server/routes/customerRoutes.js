@@ -52,15 +52,14 @@ router.get("/customers", async (req, res) => {
   }
 });
 
-router.delete("/customers/delete-old", async (req, res) => {
+// DELETE ALL CUSTOMERS ON DEMAND
+router.delete("/customers/delete-all", async (req, res) => {
   try {
-    const days = 30; // or get from req.query for flexibility
-    const result = await pool.query(
-      `DELETE FROM customers WHERE created_at < NOW() - INTERVAL '${days} days'`
-    );
-    res.json({ message: `Deleted ${result.rowCount} old customers` });
+    // This removes all rows and resets the auto-increment ID
+    await pool.query("TRUNCATE TABLE customers RESTART IDENTITY CASCADE");
+    res.json({ message: "All customer data deleted successfully" });
   } catch (err) {
-    console.error("Delete old data error:", err);
+    console.error("Delete all data error:", err);
     res.status(500).json({ error: "Delete failed" });
   }
 });
