@@ -52,14 +52,18 @@ router.get("/customers", async (req, res) => {
   }
 });
 
-// DELETE ALL CUSTOMERS ON DEMAND
+// DELETE ALL CUSTOMERS (URL ACCESS)
 router.delete("/customers/delete-all", async (req, res) => {
   try {
-    // This removes all rows and resets the auto-increment ID
-    await pool.query("TRUNCATE TABLE customers RESTART IDENTITY CASCADE");
-    res.json({ message: "All customer data deleted successfully" });
+    const result = await pool.query("DELETE FROM customers");
+
+    res.json({
+      message: "All customer data deleted successfully",
+      deletedRows: result.rowCount
+    });
+
   } catch (err) {
-    console.error("Delete all data error:", err);
+    console.error("Delete Error:", err);
     res.status(500).json({ error: "Delete failed" });
   }
 });
