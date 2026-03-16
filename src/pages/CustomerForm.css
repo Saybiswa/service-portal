@@ -27,7 +27,7 @@ body {
 /* Title */
 .form-box h1 {
   text-align: center;
-  font-size: 24px;
+  font-size: 18px;
   color: #4f46e5;
   margin-bottom: 10px;
 }
@@ -56,9 +56,9 @@ body {
 }
 
 .input-row label {
-  width: 180px;
+  width: 280px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 10px;
 }
 
 .input-row label .required {
