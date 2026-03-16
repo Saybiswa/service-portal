@@ -41,7 +41,6 @@ router.post("/customer", async (req, res) => {
   }
 });
 
-
 // GET ALL CUSTOMERS
 router.get("/customers", async (req, res) => {
   try {
@@ -53,6 +52,16 @@ router.get("/customers", async (req, res) => {
   }
 });
 
+// DELETE ALL CUSTOMERS
+router.delete("/customers", async (req, res) => {
+  try {
+    await pool.query("TRUNCATE TABLE customers RESTART IDENTITY CASCADE");
+    res.json({ message: "All customer data deleted successfully" });
+  } catch (err) {
+    console.error("Delete Error:", err);
+    res.status(500).json({ error: "Delete failed" });
+  }
+});
 
 // EXPORT EXCEL
 router.get("/customers/export", async (req, res) => {
