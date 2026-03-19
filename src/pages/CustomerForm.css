@@ -7,7 +7,7 @@
 body {
   margin: 0;
   background: linear-gradient(135deg, #e0e7ff, #c4b5fd);
-  min-height: 100vh;
+  min-height: 50vh;
   display: flex;
   justify-content: center;
   padding: 5px;
@@ -15,8 +15,8 @@ body {
 
 /* Form Container */
 .form-box {
-  width: 75%;
-  max-width: 900px;
+  width: 100%;
+  max-width: 2000px;
   background: #ffffff;
   padding: 15px 35px;
   border-radius: 18px;
@@ -66,17 +66,57 @@ body {
   margin-left: 3px;
 }
 
+/* Fix ALL inputs + select */
 .input-row input,
-.input-row select,
-.input-row textarea {
+.input-row select {
   flex: 1;
   padding: 0.1px 100px;
   border-radius: 8px;
   border: 1px solid #ddd;
   font-size: 13px;
   background: #fff;
+  height: 32px;
 }
 
+/* 🔥 FIX TEXTAREA (ADDRESS + COMPLAINT) */
+.input-row textarea {
+  height: 55px;
+  padding: 15px 20px;   /* 🔥 increase top padding */
+  line-height: 1.4;
+  flex: 1;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 10px;
+  background: #fff;
+}
+
+/* 🔥 ALIGN TEXTAREA ROW */
+.input-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.input-row textarea {
+  align-self: flex-start;
+}
+
+/* 🔥 FIX LABEL POSITION FOR TEXTAREA */
+.input-row:has(textarea) {
+  align-items: flex-start;
+}
+/* For input fields */
+.input-row input,
+.input-row select,
+.input-row textarea {
+  font-size: 16px;   /* 🔥 increase this value */
+}
+
+/* LABEL */
+.input-row label {
+  width: 150px;
+  padding-top: 6px;
+}
 /* Focus */
 .input-row input:focus,
 .input-row select:focus,
@@ -86,11 +126,7 @@ body {
   box-shadow: 0 0 5px rgba(79,70,229,0.25);
 }
 
-/* Textarea */
-textarea {
-  min-height: 60px;
-  resize: vertical;
-}
+
 
 /* Submit Button */
 .submit-btn {
