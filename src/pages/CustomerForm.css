@@ -51,14 +51,14 @@ body {
 .input-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   margin-bottom:6px;
 }
 
 .input-row label {
   width: 280px;
   font-weight: 600;
-  font-size: 10px;
+  font-size: 15px;
 }
 
 .input-row label .required {
@@ -70,7 +70,7 @@ body {
 .input-row select,
 .input-row textarea {
   flex: 1;
-  padding: 8px 10px;
+  padding: 4px 100px;
   border-radius: 8px;
   border: 1px solid #ddd;
   font-size: 13px;

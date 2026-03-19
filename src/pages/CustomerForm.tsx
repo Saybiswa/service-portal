@@ -85,7 +85,7 @@ const CustomerForm = () => {
           
           {/* Customer Details */}
           <div className="section">
-            <h3>Customer Details</h3>
+            
 
             <div className="input-row">
               <label>Customer Name <span className="required">*</span></label>
@@ -110,7 +110,7 @@ const CustomerForm = () => {
 
           {/* Address Details */}
           <div className="section">
-            <h3>Address Details</h3>
+            
 
             <div className="input-row">
               <label>State <span className="required">*</span></label>
@@ -135,8 +135,6 @@ const CustomerForm = () => {
 
           {/* Product Details */}
           <div className="section">
-            <h3>Product Details</h3>
-
             <div className="input-row">
               <label>Product <span className="required">*</span></label>
               <select name="product" value={form.product} onChange={handleChange}>
@@ -166,8 +164,6 @@ const CustomerForm = () => {
 
           {/* Service Details */}
           <div className="section">
-            <h3>Service Details</h3>
-
             <div className="input-row">
               <label>Warranty Status</label>
               <select name="warranty_status" value={form.warranty_status} onChange={handleChange}>
