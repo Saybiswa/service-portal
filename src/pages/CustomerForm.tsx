@@ -1,27 +1,28 @@
-import { useState } from "react";
-//import axios from "axios";
+import { useState, useEffect } from "react";
 import "./CustomerForm.css";
 import api from "../api";
+
 const CustomerForm = () => {
+
   const [form, setForm] = useState({
     customer_name: "",
     phone1: "",
     phone2: "",
     email: "",
+    pincode: "",
     state: "",
     city: "",
     locality: "",
     address: "",
     product: "",
     product_type: "",
-    model_number: "",
-    serial_number: "",
-    warranty_status: "",
     svc_type: "",
     complaint_issue: ""
   });
 
-  const productTypes: Record<string, string[]> = {
+  const [suggestions, setSuggestions] = useState<any[]>([]);
+
+   const productTypes: Record<string, string[]> = {
     "Washing Machine": ["Semi Automatic","Top Load","Front load","Front Load with Dryer","Twin wash (front)","Twin wash (Top)","Dishwasher","Dryer"],
     "Refrigerator": ["Direct Cool (Single Door)","Upto 300 Ltr (double)","301 to 400 Ltr (double)","401 to 500 Ltr (double)","Above 500 Ltr (double)","DIOS SXS","Insta View"],
     "Air conditioner": ["Split AC (Inverter Model)(1 Ton)","Split AC (Inverter Model)(1.5 Ton)","Split AC (Inverter Model)(2 Ton)","Split AC (Non Inverter)(1 Ton)","Split AC (Non Inverter)(1.5 Ton)","Split AC (Non Inverter)(2 Ton)","Window (1 Ton)","Window (1.5 Ton)","Window (2 Ton)","Tower","Art cool","Multi Split/Floor Standing"],
@@ -33,57 +34,113 @@ const CustomerForm = () => {
     "Air Cleaner": ["Air Cleaner (AS40GWWK0)","Air Cleaner (AS60GDWT0)","Air Cleaner (AS95GDWT0)","Wearable Mask"]
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  // ==========================
+  // 🔍 PINCODE SEARCH
+  // ==========================
+  const handlePincodeChange = async (e) => {
+  const value = e.target.value;
+
+  setForm(prev => ({ ...prev, pincode: value }));
+
+  if (value.length >= 2) {
+    try {
+      const res = await api.get(`http://localhost:5000/api/pincode?search=${value}`);
+
+      console.log("API DATA:", res.data); // 👈 DEBUG
+
+      // ✅ FIX HERE
+      
+      if (Array.isArray(res.data)) {
+        setSuggestions(res.data);
+      } else {
+        setSuggestions([]); // fallback
+      }
+
+    } catch (err) {
+      console.error(err);
+      setSuggestions([]); // ✅ IMPORTANT
+    }
+  } else {
+    setSuggestions([]);
+  }
+};
+
+  const handleSelectPincode = (item: any) => {
+    setForm(prev => ({
+      ...prev,
+      pincode: item.pincode,
+      city: item.city,
+      locality: item.locality,
+      state: item.state
+    }));
+
+    setSuggestions([]);
+  };
+
+  // ❌ CLOSE DROPDOWN
+  useEffect(() => {
+  const close = (e: any) => {
+    if (!e.target.closest(".pincode-wrapper")) {
+      setSuggestions([]);
+    }
+  };
+
+  window.addEventListener("click", close);
+  return () => window.removeEventListener("click", close);
+}, []);
+  // ==========================
+  // NORMAL INPUT
+  // ==========================
+  const handleChange = (e: any) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // ==========================
+  // SUBMIT
+  // ==========================
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    // Mandatory field check
-    if(!form.customer_name || !form.phone1 || !form.phone2 || !form.state || !form.city || !form.locality || !form.address || !form.product || !form.product_type || !form.svc_type){
-      alert("Please fill all mandatory fields ⚠️");
+    if (!form.customer_name || !form.phone1 || !form.phone2 || !form.pincode || !form.product || !form.product_type || !form.svc_type) {
+      alert("Fill all required fields ⚠️");
       return;
     }
 
     try {
-     await api.post("/api/customer", form);
-      alert("Customer Registered Successfully 🎉");
+      await api.post("/api/customer", form);
+      alert("Saved Successfully ✅");
 
       setForm({
         customer_name: "",
         phone1: "",
         phone2: "",
         email: "",
+        pincode: "",
         state: "",
         city: "",
         locality: "",
         address: "",
         product: "",
         product_type: "",
-        model_number: "",
-        serial_number: "",
-        warranty_status: "",
         svc_type: "",
         complaint_issue: ""
       });
 
     } catch (error) {
-      console.error(error);
-      alert("Error saving data. Please try again.");
-    }
+  console.error("Submit Error:", error);
+  alert("Error saving data ❌");
+}
   };
 
   return (
     <div className="page">
       <div className="form-box">
         <h1>Customer Service Request Registration</h1>
-        
 
         <form onSubmit={handleSubmit}>
-          
-          {/* Customer Details */}
+
+          {/* CUSTOMER */}
           <div className="section">
             
 
@@ -107,89 +164,99 @@ const CustomerForm = () => {
               <input name="email" value={form.email} onChange={handleChange} />
             </div>
           </div>
-
-          {/* Address Details */}
+          {/* ADDRESS */}
           <div className="section">
-            
+<div className="input-row">
+<label>Pincode <span className="required">*</span></label>
+<div className="pincode-wrapper">
+  <input
+    name="pincode"
+    value={form.pincode}
+    onChange={handlePincodeChange}
+    onClick={(e) => e.stopPropagation()}
+    autoComplete="off"
+  />
+  
+
+  {suggestions.length > 0 && (
+    <ul
+      className="dropdown"
+      onClick={(e) => e.stopPropagation()}
+    >
+      {suggestions.map((item, i) => (
+        <li key={i} onClick={() => handleSelectPincode(item)}>
+          {item.pincode} - {item.locality || "Area"}, {item.city}
+        </li>
+      ))}
+    </ul>
+  )}
+</div>
+</div>
 
             <div className="input-row">
-              <label>State <span className="required">*</span></label>
-              <input name="state" value={form.state} onChange={handleChange} />
+              <label>State</label>
+              <input value={form.state} readOnly />
             </div>
 
             <div className="input-row">
-              <label>City <span className="required">*</span></label>
-              <input name="city" value={form.city} onChange={handleChange} />
+              <label>City</label>
+              <input value={form.city} readOnly />
             </div>
 
             <div className="input-row">
-              <label>Locality <span className="required">*</span></label>
-              <input name="locality" value={form.locality} onChange={handleChange} />
+              <label>Locality</label>
+              <input value={form.locality} readOnly />
             </div>
 
             <div className="input-row">
-              <label>Full Address <span className="required">*</span></label>
+              <label>Address</label>
               <textarea name="address" value={form.address} onChange={handleChange}></textarea>
             </div>
           </div>
 
-          {/* Product Details */}
+          {/* PRODUCT */}
           <div className="section">
             <div className="input-row">
               <label>Product <span className="required">*</span></label>
               <select name="product" value={form.product} onChange={handleChange}>
-                <option value="">Select Product *</option>
-                {Object.keys(productTypes).map((prod, idx) => <option key={idx} value={prod}>{prod}</option>)}
+                <option value="">Select</option>
+                {Object.keys(productTypes).map((p, i) => (
+                  <option key={i}>{p}</option>
+                ))}
               </select>
             </div>
 
             <div className="input-row">
               <label>Product Type <span className="required">*</span></label>
               <select name="product_type" value={form.product_type} onChange={handleChange}>
-                <option value="">Select Product Type *</option>
-                {form.product && productTypes[form.product]?.map((type, idx) => <option key={idx} value={type}>{type}</option>)}
+                <option value="">Select</option>
+                {form.product &&
+                  productTypes[form.product]?.map((t, i) => (
+                    <option key={i}>{t}</option>
+                  ))}
               </select>
-            </div>
-
-            <div className="input-row">
-              <label>Model Number</label>
-              <input name="model_number" value={form.model_number} onChange={handleChange} />
-            </div>
-
-            <div className="input-row">
-              <label>Serial Number</label>
-              <input name="serial_number" value={form.serial_number} onChange={handleChange} />
             </div>
           </div>
 
-          {/* Service Details */}
+          {/* SERVICE */}
           <div className="section">
             <div className="input-row">
-              <label>Warranty Status</label>
-              <select name="warranty_status" value={form.warranty_status} onChange={handleChange}>
-                <option value="">Select Warranty</option>
-                <option value="In Warranty">In Warranty</option>
-                <option value="Out of Warranty">Out of Warranty</option>
-              </select>
-            </div>
-
-            <div className="input-row">
-              <label>Service Type <span className="required">*</span></label>
+              <label>Service <span className="required">*</span></label>
               <select name="svc_type" value={form.svc_type} onChange={handleChange}>
-                <option value="">Select Service</option>
-                <option value="Installation">Installation</option>
-                <option value="Repair">Repair</option>
-                <option value="Maintenance">Maintenance</option>
+                <option value="">Select</option>
+                <option>Installation</option>
+                <option>Repair</option>
+                <option>Maintenance</option>
               </select>
             </div>
 
             <div className="input-row">
-              <label>Complaint / Issue</label>
+              <label>Complaint</label>
               <textarea name="complaint_issue" value={form.complaint_issue} onChange={handleChange}></textarea>
             </div>
           </div>
 
-          <button type="submit" className="submit-btn">Submit</button>
+          <button className="submit-btn">Submit</button>
         </form>
       </div>
     </div>

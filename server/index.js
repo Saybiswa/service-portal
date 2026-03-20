@@ -10,7 +10,7 @@ const app = express();
 // CORS configuration
 app.use(cors({
   origin: [
-    "http://localhost:5174",                // local frontend
+    "http://localhost:5173",                // local frontend
     "https://service-portal-ten.vercel.app" // deployed frontend
   ],
   methods: ["GET","POST","PUT","DELETE","OPTIONS"],

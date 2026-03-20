@@ -62,8 +62,20 @@ body {
 }
 
 .input-row label .required {
-  color: red;
+  color: rgb(220, 39, 39);
   margin-left: 3px;
+}
+.pincode-wrapper {
+  flex: 1;        /* ✅ takes same space as other inputs */
+  position: relative;
+}
+
+/* Input styling */
+.pincode-wrapper input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
 }
 
 /* Fix ALL inputs + select */
@@ -104,6 +116,33 @@ body {
 /* 🔥 FIX LABEL POSITION FOR TEXTAREA */
 .input-row:has(textarea) {
   align-items: flex-start;
+}
+.pincode-wrapper {
+  position: relative;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 200%;
+  background: white;
+  border: 1px solid #ccc;
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 999;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dropdown li {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.dropdown li:hover {
+  background: #f3c1c1;
 }
 /* For input fields */
 .input-row input,
