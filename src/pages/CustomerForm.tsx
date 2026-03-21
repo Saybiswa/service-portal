@@ -44,7 +44,7 @@ const CustomerForm = () => {
 
   if (value.length >= 2) {
     try {
-      const res = await api.get(`/api/pincode?search=${value}`);
+      const res = await api.get(`http://localhost:5000/api/pincode?search=${value}`);
 
       console.log("API DATA:", res.data); // 👈 DEBUG
 
