@@ -185,19 +185,17 @@ const CustomerForm = () => {
     >
       {suggestions.map((item, i) => (
         <li key={i} onClick={() => handleSelectPincode(item)}>
-          {item.pincode} - {item.locality || "Area"}, {item.city}
+          {item.pincode} - {item.locality}, {item.city}
         </li>
       ))}
     </ul>
   )}
 </div>
 </div>
-
-            <div className="input-row">
+<div className="input-row">
               <label>State</label>
               <input value={form.state} readOnly />
             </div>
-
             <div className="input-row">
               <label>City</label>
               <input value={form.city} readOnly />

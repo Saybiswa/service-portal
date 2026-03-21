@@ -26,6 +26,7 @@ const loadCSV = (filePath) => {
       .on("data", (row) => {
         pincodeCache.push({
           pincode: String(row.pincode || ""),
+          postal_code: String(row.postal_code || ""),
           locality: String(row.locality || ""),
           city: String(row.city || ""),
           state: String(row.statename || "")
@@ -99,7 +100,7 @@ router.post("/customer", async (req, res) => {
   try {
     const {
       customer_name, phone1, phone2, email,
-      pincode,
+      pincode,postal_code,
       state, city, locality, address,
       product, product_type, model_number,
       serial_number, warranty_status, svc_type,
@@ -109,7 +110,7 @@ router.post("/customer", async (req, res) => {
     const result = await pool.query(
       `INSERT INTO customers(
         customer_name, phone1, phone2, email,
-        pincode,
+        pincode,postal_code,
         state, city, locality, address,
         product, product_type, model_number,
         serial_number, warranty_status, svc_type,
@@ -118,7 +119,7 @@ router.post("/customer", async (req, res) => {
       RETURNING *`,
       [
         customer_name, phone1, phone2, email,
-        pincode,
+        pincode,postal_code,
         state, city, locality, address,
         product, product_type, model_number,
         serial_number, warranty_status, svc_type,
@@ -185,6 +186,7 @@ router.get("/customers/export", async (req, res) => {
       { header: "Phone 2", key: "phone2", width: 20 },
       { header: "Email", key: "email", width: 25 },
       { header: "Pincode", key: "pincode", width: 15 },
+      { header: "Postal_code", key: "postal_code", width: 15 },
       { header: "State", key: "state", width: 20 },
       { header: "City", key: "city", width: 20 },
       { header: "Locality", key: "locality", width: 20 },
