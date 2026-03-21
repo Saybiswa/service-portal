@@ -95,7 +95,7 @@ const results = pincodeCache.filter(p =>
 // ==========================
 // CREATE CUSTOMER
 // ==========================
-router.post("/customer", async (req, res) => {
+router.post("/customers", async (req, res) => {
   try {
     const {
       customer_name, phone1, phone2, email,
