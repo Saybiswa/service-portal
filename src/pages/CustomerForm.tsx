@@ -37,7 +37,7 @@ const CustomerForm = () => {
   // ==========================
   // 🔍 PINCODE SEARCH
   // ==========================
-  const handlePincodeChange = async (e) => {
+  const handlePincodeChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
   const value = e.target.value;
 
   setForm(prev => ({ ...prev, pincode: value }));
