@@ -44,8 +44,7 @@ const CustomerForm = () => {
 
   if (value.length >= 2) {
     try {
-      const res = await api.get(`http://localhost:5000/api/pincode?search=${value}`);
-
+     const res = await api.get(`https://service-portal-api.onrender.com/api/pincode?search=${value}`);
       console.log("API DATA:", res.data); // 👈 DEBUG
 
       // ✅ FIX HERE
@@ -108,7 +107,7 @@ const CustomerForm = () => {
     }
 
     try {
-      await api.post("/api/customer", form);
+      await api.post("/api/customers", form);
       alert("Saved Successfully ✅");
 
       setForm({
