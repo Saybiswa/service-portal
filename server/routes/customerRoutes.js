@@ -81,7 +81,7 @@ if (!pincodeCache.length) {
 const results = pincodeCache.filter(p =>
   p.pincode.startsWith(search) ||
   (p.locality && p.locality.toLowerCase().includes(searchLower))
-).slice(0, 1000);
+).slice(0, 100);
 
     res.json(results);
 
