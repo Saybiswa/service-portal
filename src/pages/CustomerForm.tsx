@@ -101,7 +101,7 @@ const CustomerForm = () => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    if (!form.customer_name || !form.phone1 || !form.phone2 || !form.pincode || !form.product || !form.product_type || !form.svc_type) {
+    if (!form.customer_name || !form.phone1 || !form.phone2 || !form.pincode || !form.product || !form.product_type || !form.warranty_status|| !form.svc_type) {
       alert("Fill all required fields ⚠️");
       return;
     }
