@@ -21,7 +21,6 @@ export const createTable = async () => {
         customer_name TEXT,
         phone1 TEXT,
         phone2 TEXT,
-        email TEXT,
         pincode TEXT,
         state TEXT,
         city TEXT,
