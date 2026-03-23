@@ -58,28 +58,31 @@ router.post("/customers", async (req, res) => {
     const {
       customer_name, phone1, phone2, 
       pincode, state, city, locality, address,
-      product, product_type, model_number,
-      serial_number, warranty_status, svc_type,
+      product, product_type,
+      warranty_status, svc_type,
       complaint_issue
     } = req.body;
+
+    console.log("Incoming:", req.body); // DEBUG
 
     const result = await pool.query(
       `INSERT INTO customers(
         customer_name, phone1, phone2, 
         pincode, state, city, locality, address,
-        product, product_type, model_number,
-        serial_number, warranty_status, svc_type,
+        product, product_type,
+        warranty_status, svc_type,
         complaint_issue
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
       RETURNING *`,
       [
         customer_name, phone1, phone2, 
         pincode, state, city, locality, address,
-        product, product_type, model_number,
-        serial_number, warranty_status, svc_type,
+        product, product_type,
+        warranty_status, svc_type,
         complaint_issue
       ]
     );
+
 
     res.json(result.rows[0]);
   } catch (err) {
