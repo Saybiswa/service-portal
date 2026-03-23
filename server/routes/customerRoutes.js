@@ -142,8 +142,6 @@ router.get("/customers/export", async (req, res) => {
       { header: "Address", key: "address", width: 30 },
       { header: "Product", key: "product", width: 20 },
       { header: "Product Type", key: "product_type", width: 25 },
-      { header: "Model", key: "model_number", width: 20 },
-      { header: "Serial", key: "serial_number", width: 20 },
       { header: "Warranty", key: "warranty_status", width: 20 },
       { header: "Service Type", key: "svc_type", width: 20 },
       { header: "Complaint", key: "complaint_issue", width: 30 }
