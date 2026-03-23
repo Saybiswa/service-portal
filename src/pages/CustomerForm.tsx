@@ -229,11 +229,11 @@ const CustomerForm = () => {
               </select>
             </div>
              <div className="input-row">
-              <label>Warrenty <span className="required">*</span></label>
-              <select name=" warranty_status" value={form. warranty_status} onChange={handleChange}>
+              <label>Warranty <span className="required">*</span></label>
+              <select name="warranty_status" value={form.warranty_status} onChange={handleChange}>
                 <option value="">Select</option>
-                <option>In warrenty</option>
-                <option>Out of warrenty</option>
+                <option>In warranty</option>
+                <option>Out of warranty</option>
               </select>
             </div>
           </div>
