@@ -1,31 +1,34 @@
-// index.js
+import dotenv from "dotenv";
+dotenv.config(); // MUST be first
+
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
-import customerRoutes from "./routes/customerRoutes.js";
+import customerRoutes, { loadAllFiles } from "./routes/customerRoutes.js";
+import { createTable } from "./db.js";
 
-dotenv.config();
 const app = express();
 
-// CORS configuration
 app.use(cors({
-  origin: [
-    "http://localhost:5173",                // local frontend
-    "https://service-portal-ten.vercel.app" // deployed frontend
-  ],
+  origin: ["http://localhost:5173", "https://service-portal-ten.vercel.app"],
   methods: ["GET","POST","PUT","DELETE","OPTIONS"],
   allowedHeaders: ["Content-Type","Authorization"],
   credentials: true
 }));
 
-// Preflight requests
-//app.options("/*", cors());
-
 app.use(express.json());
 app.use("/api", customerRoutes);
-
-// Test endpoint
 app.get("/", (req, res) => res.send("Server Running"));
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const startServer = async () => {
+  try {
+    await createTable();     // ensure table exists
+    await loadAllFiles();    // load pincodes
+
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+  } catch (err) {
+    console.error("❌ Server startup failed:", err);
+  }
+};
+
+startServer();

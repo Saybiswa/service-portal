@@ -8,7 +8,6 @@ const CustomerForm = () => {
     customer_name: "",
     phone1: "",
     phone2: "",
-    email: "",
     pincode: "",
     state: "",
     city: "",
@@ -16,6 +15,7 @@ const CustomerForm = () => {
     address: "",
     product: "",
     product_type: "",
+    warranty_status:"",
     svc_type: "",
     complaint_issue: ""
   });
@@ -44,7 +44,7 @@ const CustomerForm = () => {
 
   if (value.length >= 2) {
     try {
-     const res = await api.get(`https://service-portal-api.onrender.com/api/pincode?search=${value}`);
+     const res = await api.get(`/api/pincode?search=${value}`);
       console.log("API DATA:", res.data); // 👈 DEBUG
 
       // ✅ FIX HERE
@@ -107,14 +107,13 @@ const CustomerForm = () => {
     }
 
     try {
-      await api.post("/api/customers", form);
+      await api.post("/api/customer", form);
       alert("Saved Successfully ✅");
 
       setForm({
         customer_name: "",
         phone1: "",
         phone2: "",
-        email: "",
         pincode: "",
         state: "",
         city: "",
@@ -122,6 +121,7 @@ const CustomerForm = () => {
         address: "",
         product: "",
         product_type: "",
+        warranty_status: "",
         svc_type: "",
         complaint_issue: ""
       });
@@ -149,18 +149,13 @@ const CustomerForm = () => {
             </div>
 
             <div className="input-row">
-              <label>Phone Number 1 <span className="required">*</span></label>
+              <label>Primary Number <span className="required">*</span></label>
               <input name="phone1" value={form.phone1} onChange={handleChange} />
             </div>
 
             <div className="input-row">
-              <label>Phone Number 2 <span className="required">*</span></label>
+              <label>Alternative number <span className="required">*</span></label>
               <input name="phone2" value={form.phone2} onChange={handleChange} />
-            </div>
-
-            <div className="input-row">
-              <label>Email</label>
-              <input name="email" value={form.email} onChange={handleChange} />
             </div>
           </div>
           {/* ADDRESS */}
@@ -231,6 +226,14 @@ const CustomerForm = () => {
                   productTypes[form.product]?.map((t, i) => (
                     <option key={i}>{t}</option>
                   ))}
+              </select>
+            </div>
+             <div className="input-row">
+              <label>Warrenty <span className="required">*</span></label>
+              <select name=" warranty_status" value={form. warranty_status} onChange={handleChange}>
+                <option value="">Select</option>
+                <option>In warrenty</option>
+                <option>Out of warrenty</option>
               </select>
             </div>
           </div>

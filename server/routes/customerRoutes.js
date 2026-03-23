@@ -1,106 +1,63 @@
+// server/routes/customerRoutes.js
 import express from "express";
-import pool from "../db.js";
-import ExcelJS from "exceljs";
+import pool, { createTable } from "../db.js";
 import fs from "fs";
 import csv from "csv-parser";
 
 const router = express.Router();
 
-
-// ==========================
-// 🔥 PINCODE LOAD FROM CSV
-// ==========================
-// ==========================
-// 🔥 LOAD MULTIPLE CSV FILES
-// ==========================
+// CSV cache
 let pincodeCache = [];
-
-// 📁 Folder where CSV files exist
 const folderPath = "./pincodes";
 
-// ✅ Function to load one CSV
-const loadCSV = (filePath) => {
-  return new Promise((resolve, reject) => {
-    fs.createReadStream(filePath)
-      .pipe(csv())
-      .on("data", (row) => {
-        pincodeCache.push({
-          pincode: String(row.pincode || ""),
-          locality: String(row.locality || ""),
-          city: String(row.city || ""),
-          state: String(row.statename || "")
-        });
-      })
-      .on("end", () => {
-        console.log(`✅ Loaded: ${filePath}`);
-        resolve();
-      })
-      .on("error", (err) => {
-        console.error("❌ CSV Error:", err);
-        reject(err);
-      });
-  });
-};
-
-// ✅ Load ALL CSV files from folder
-const loadAllFiles = async () => {
+export const loadAllFiles = async () => {
   try {
-    const files = fs.readdirSync(folderPath); // ✅ FIX
-
-    const csvFiles = files.filter(file => file.endsWith(".csv"));
-
-    for (const file of csvFiles) {
-      await loadCSV(`${folderPath}/${file}`); // ✅ load each file
+    const files = fs.readdirSync(folderPath).filter(f => f.endsWith(".csv"));
+    for (const file of files) {
+      await new Promise((resolve, reject) => {
+        fs.createReadStream(`${folderPath}/${file}`)
+          .pipe(csv())
+          .on("data", row => {
+            pincodeCache.push({
+              pincode: String(row.pincode || ""),
+              locality: String(row.locality || ""),
+              city: String(row.city || ""),
+              state: String(row.statename || "")
+            });
+          })
+          .on("end", () => {
+            console.log(`✅ Loaded: ${file}`);
+            resolve();
+          })
+          .on("error", reject);
+      });
     }
-
     console.log("🎉 All CSV files loaded");
     console.log("Total records:", pincodeCache.length);
     console.log("Sample:", pincodeCache[0]);
-
   } catch (err) {
     console.error("❌ Error loading CSVs:", err);
   }
 };
 
-// 🚀 Run once when server starts
-loadAllFiles();
-
-// ==========================
-// 🔍 PINCODE SEARCH API
-// ==========================
+// Pincode search
 router.get("/pincode", (req, res) => {
-  try {
-    const { search } = req.query;
-
-    if (!search) return res.json([]);
-if (!pincodeCache.length) {
-  return res.status(503).json({ error: "Data loading, try again" });
-}
-    const searchLower = search.toLowerCase();
-
-const results = pincodeCache.filter(p =>
-  p.pincode.startsWith(search) ||
-  (p.locality && p.locality.toLowerCase().includes(searchLower))
-).slice(0, 20);
-
-    res.json(results);
-
-  } catch (err) {
-    console.error("Pincode Error:", err);
-    res.status(500).json({ error: "Pincode error" });
-  }
+  const { search } = req.query;
+  if (!search) return res.json([]);
+  const searchLower = search.toLowerCase();
+  const results = pincodeCache.filter(p =>
+    p.pincode.startsWith(search) ||
+    (p.locality && p.locality.toLowerCase().includes(searchLower))
+  ).slice(0, 20);
+  res.json(results);
 });
 
-
-// ==========================
-// CREATE CUSTOMER
-// ==========================
-router.post("/customers", async (req, res) => {
+// Customer CRUD
+router.post("/customer", async (req, res) => {
   try {
     const {
-      customer_name, phone1, phone2, email,
-      pincode,
-      state, city, locality, address,
+      customer_name, phone1, phone2, 
+      pincode, state, city, locality, address,
       product, product_type, model_number,
       serial_number, warranty_status, svc_type,
       complaint_issue
@@ -108,18 +65,16 @@ router.post("/customers", async (req, res) => {
 
     const result = await pool.query(
       `INSERT INTO customers(
-        customer_name, phone1, phone2, email,
-        pincode,
-        state, city, locality, address,
+        customer_name, phone1, phone2, 
+        pincode, state, city, locality, address,
         product, product_type, model_number,
         serial_number, warranty_status, svc_type,
         complaint_issue
       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
       RETURNING *`,
       [
-        customer_name, phone1, phone2, email,
-        pincode,
-        state, city, locality, address,
+        customer_name, phone1, phone2, 
+        pincode, state, city, locality, address,
         product, product_type, model_number,
         serial_number, warranty_status, svc_type,
         complaint_issue
@@ -127,27 +82,21 @@ router.post("/customers", async (req, res) => {
     );
 
     res.json(result.rows[0]);
-
   } catch (err) {
-    console.error("Insert Error:", err);
+    console.error("Insert Error:", err.message);
     res.status(500).json({ error: "Server error" });
   }
 });
 
-
-// ==========================
-// GET ALL CUSTOMERS
-// ==========================
 router.get("/customers", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM customers ORDER BY id DESC");
     res.json(result.rows);
   } catch (err) {
-    console.error(err);
+    console.error(err.message);
     res.status(500).json({ error: "Server error" });
   }
 });
-
 
 // ==========================
 // DELETE ALL CUSTOMERS
@@ -183,7 +132,6 @@ router.get("/customers/export", async (req, res) => {
       { header: "Customer Name", key: "customer_name", width: 25 },
       { header: "Phone 1", key: "phone1", width: 20 },
       { header: "Phone 2", key: "phone2", width: 20 },
-      { header: "Email", key: "email", width: 25 },
       { header: "Pincode", key: "pincode", width: 15 },
       { header: "State", key: "state", width: 20 },
       { header: "City", key: "city", width: 20 },

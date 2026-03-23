@@ -1,16 +1,20 @@
 import pkg from "pg";
 const { Pool } = pkg;
 
+const isProduction = process.env.NODE_ENV === "production";
+
+if (!process.env.DATABASE_URL) {
+  console.error("❌ DATABASE_URL not set!");
+  process.exit(1); // stop the server if DB URL missing
+}
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+  ssl: isProduction ? { rejectUnauthorized: false } : false
 });
 
-// Auto create table + add missing columns
-const createTable = async () => {
+export const createTable = async () => {
   try {
-
-    // 1️⃣ CREATE TABLE
     await pool.query(`
       CREATE TABLE IF NOT EXISTS customers (
         id SERIAL PRIMARY KEY,
@@ -32,22 +36,7 @@ const createTable = async () => {
         complaint_issue TEXT
       );
     `);
-
-    // 2️⃣ CHECK IF COLUMN EXISTS
-    const check = await pool.query(`
-      SELECT column_name 
-      FROM information_schema.columns 
-      WHERE table_name='customers' AND column_name='pincode';
-    `);
-
-    // 3️⃣ ADD COLUMN ONLY IF NOT EXISTS
-    if (check.rows.length === 0) {
-      await pool.query(`ALTER TABLE customers ADD COLUMN pincode TEXT;`);
-      console.log("✅ Pincode column added");
-    }
-
     console.log("✅ Customers table ready");
-
   } catch (err) {
     console.error("❌ Table creation error:", err.message);
   }
