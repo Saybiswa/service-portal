@@ -53,7 +53,7 @@ router.get("/pincode", (req, res) => {
 });
 
 // Customer CRUD
-router.post("/customer", async (req, res) => {
+router.post("/customers", async (req, res) => {
   try {
     const {
       customer_name, phone1, phone2, 

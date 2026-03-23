@@ -107,7 +107,7 @@ const CustomerForm = () => {
     }
 
     try {
-      await api.post("/api/customer", form);
+      await api.post("/api/customers", form);
       alert("Saved Successfully ✅");
 
       setForm({
