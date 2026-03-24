@@ -1,10 +1,36 @@
 import { useState, useEffect } from "react";
 import "./CustomerForm.css";
-import api from "../api";
+import axios from "axios";
 
+const getAgentCredentials = () => {
+  
+  let agent_id = localStorage.getItem("agent_id");
+  let password = localStorage.getItem("agent_password");
+
+  if (!agent_id || !password) {
+    agent_id = prompt("Enter Agent ID:") || "";
+    password = prompt("Enter Password:") || "";
+
+    if (agent_id && password) {
+      localStorage.setItem("agent_id", agent_id);
+      localStorage.setItem("agent_password", password);
+    }
+  }
+
+  return {
+    agent_id: agent_id || "",
+    password: password || ""
+  };
+};
 const CustomerForm = () => {
+   const employeeName = localStorage.getItem("agent_name"); // ✅ FIX
+
+  const creds = getAgentCredentials(); // ✅ GET BOTH VALUES
 
   const [form, setForm] = useState({
+    agent_id: creds.agent_id,   // ✅ FIXED
+    password: creds.password,   // ✅ FIXED
+
     customer_name: "",
     phone1: "",
     phone2: "",
@@ -15,14 +41,15 @@ const CustomerForm = () => {
     address: "",
     product: "",
     product_type: "",
-    warranty_status:"",
+    serial_number:"",
+    model_number:"",
+    warranty_status: "",
     svc_type: "",
     complaint_issue: ""
   });
-
   const [suggestions, setSuggestions] = useState<any[]>([]);
 
-   const productTypes: Record<string, string[]> = {
+ const productTypes: Record<string, string[]> = {
     "Washing Machine": ["Semi Automatic","Top Load","Front load","Front Load with Dryer","Twin wash (front)","Twin wash (Top)","Dishwasher","Dryer"],
     "Refrigerator": ["Direct Cool (Single Door)","Upto 300 Ltr (double)","301 to 400 Ltr (double)","401 to 500 Ltr (double)","Above 500 Ltr (double)","DIOS SXS","Insta View"],
     "Air conditioner": ["Split AC (Inverter Model)(1 Ton)","Split AC (Inverter Model)(1.5 Ton)","Split AC (Inverter Model)(2 Ton)","Split AC (Non Inverter)(1 Ton)","Split AC (Non Inverter)(1.5 Ton)","Split AC (Non Inverter)(2 Ton)","Window (1 Ton)","Window (1.5 Ton)","Window (2 Ton)","Tower","Art cool","Multi Split/Floor Standing"],
@@ -34,35 +61,40 @@ const CustomerForm = () => {
     "Air Cleaner": ["Air Cleaner (AS40GWWK0)","Air Cleaner (AS60GDWT0)","Air Cleaner (AS95GDWT0)","Wearable Mask"]
   };
 
-  // ==========================
-  // 🔍 PINCODE SEARCH
-  // ==========================
-  const handlePincodeChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  const value = e.target.value;
-
-  setForm(prev => ({ ...prev, pincode: value }));
-
-  if (value.length >= 2) {
-    try {
-     const res = await api.get(`/api/pincode?search=${value}`);
-      console.log("API DATA:", res.data); // 👈 DEBUG
-
-      // ✅ FIX HERE
-      
-      if (Array.isArray(res.data)) {
-        setSuggestions(res.data);
-      } else {
-        setSuggestions([]); // fallback
+  // ✅ ONLY dropdown close logic here
+  useEffect(() => {
+    const close = (e: any) => {
+      if (!e.target.closest(".pincode-wrapper")) {
+        setSuggestions([]);
       }
+    };
 
-    } catch (err) {
-      console.error(err);
-      setSuggestions([]); // ✅ IMPORTANT
+    window.addEventListener("click", close);
+    return () => window.removeEventListener("click", close);
+  }, []);
+
+  // ==========================
+  // PINCODE SEARCH
+  // ==========================
+  const handlePincodeChange = async (e: any) => {
+    const value = e.target.value;
+
+    setForm(prev => ({ ...prev, pincode: value }));
+
+    if (value.length >= 2) {
+      try {
+        const res = await axios.get(
+          `https://service-portal-api.onrender.com/api/pincode?search=${value}`
+        );
+
+        setSuggestions(Array.isArray(res.data) ? res.data : []);
+      } catch {
+        setSuggestions([]);
+      }
+    } else {
+      setSuggestions([]);
     }
-  } else {
-    setSuggestions([]);
-  }
-};
+  };
 
   const handleSelectPincode = (item: any) => {
     setForm(prev => ({
@@ -72,27 +104,15 @@ const CustomerForm = () => {
       locality: item.locality,
       state: item.state
     }));
-
     setSuggestions([]);
   };
 
-  // ❌ CLOSE DROPDOWN
-  useEffect(() => {
-  const close = (e: any) => {
-    if (!e.target.closest(".pincode-wrapper")) {
-      setSuggestions([]);
-    }
-  };
-
-  window.addEventListener("click", close);
-  return () => window.removeEventListener("click", close);
-}, []);
   // ==========================
-  // NORMAL INPUT
+  // INPUT CHANGE
   // ==========================
   const handleChange = (e: any) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    setForm(prev => ({ ...prev, [name]: value }));
   };
 
   // ==========================
@@ -101,16 +121,31 @@ const CustomerForm = () => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    if (!form.customer_name || !form.phone1 || !form.phone2 || !form.pincode || !form.product || !form.product_type || !form.warranty_status|| !form.svc_type) {
+    if (
+      !form.customer_name ||
+      !form.phone1 ||
+      !form.phone2 ||
+      !form.pincode ||
+      !form.product ||
+      !form.product_type ||
+      !form.warranty_status ||
+      !form.svc_type
+    ) {
       alert("Fill all required fields ⚠️");
       return;
     }
 
     try {
-      await api.post("/api/customers", form);
+      await axios.post(
+        "https://service-portal-api.onrender.com/api/customers",
+        form
+      );
+
       alert("Saved Successfully ✅");
 
-      setForm({
+      // ✅ KEEP agent_id
+      setForm(prev => ({
+        ...prev,
         customer_name: "",
         phone1: "",
         phone2: "",
@@ -121,22 +156,26 @@ const CustomerForm = () => {
         address: "",
         product: "",
         product_type: "",
+        serial_number:"",
+        model_number:"",
         warranty_status: "",
         svc_type: "",
         complaint_issue: ""
-      });
+      }));
 
     } catch (error) {
-  console.error("Submit Error:", error);
-  alert("Error saving data ❌");
-}
+      console.error("Submit Error:", error);
+      alert("Error saving data ❌");
+    }
   };
 
   return (
     <div className="page">
       <div className="form-box">
         <h1>Customer Service Request Registration</h1>
-
+      <h3 style={{ color: "#555", marginBottom: "10px" }}>
+    Logged in as: {employeeName}
+  </h3>
         <form onSubmit={handleSubmit}>
 
           {/* CUSTOMER */}
@@ -228,8 +267,16 @@ const CustomerForm = () => {
                   ))}
               </select>
             </div>
+            <div className="input-row">
+            <label>Serial_Number</label>
+              <input name="serial_number" value={form.serial_number} onChange={handleChange} />
+            </div>
              <div className="input-row">
-              <label>Warranty <span className="required">*</span></label>
+            <label>Model_Number</label>
+              <input name="model_number" value={form.model_number} onChange={handleChange} />
+            </div>
+             <div className="input-row">
+              <label>Warranty Status<span className="required">*</span></label>
               <select name="warranty_status" value={form.warranty_status} onChange={handleChange}>
                 <option value="">Select</option>
                 <option>In warranty</option>

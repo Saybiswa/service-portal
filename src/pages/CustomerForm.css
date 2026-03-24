@@ -92,7 +92,7 @@ body {
 
 /* 🔥 FIX TEXTAREA (ADDRESS + COMPLAINT) */
 .input-row textarea {
-  height: 55px;
+  height: 40px;
   padding: 15px 20px;   /* 🔥 increase top padding */
   line-height: 1.4;
   flex: 1;

@@ -6,6 +6,31 @@ import csv from "csv-parser";
 import ExcelJS from "exceljs";
 
 const router = express.Router();
+let agentData = [];
+export const loadAgents = async () => {
+  try {
+    await new Promise((resolve, reject) => {
+      fs.createReadStream("./agents.csv")
+        .pipe(csv())
+        .on("data", (row) => {
+          agentData.push({
+            agent_id: String(row.agent_id || "").trim(),
+            employee_name: String(row.employee_name || "").trim(),
+            password: String(row.password || "").trim()
+          });
+        })
+        .on("end", () => {
+          console.log("✅ Agents CSV Loaded");
+          console.log("Total Agents:", agentData.length);
+          console.log("Sample:", agentData[0]);
+          resolve();
+        })
+        .on("error", reject);
+    });
+  } catch (err) {
+    console.error("❌ Agent CSV load error:", err);
+  }
+};
 
 // CSV cache
 let pincodeCache = [];
@@ -41,6 +66,27 @@ export const loadAllFiles = async () => {
   }
 };
 
+router.post("/agent-login", (req, res) => {
+  const { agent_id, password } = req.body;
+
+  const agent = agentData.find(
+    (a) =>
+      a.agent_id === agent_id.trim() &&
+      a.password === password.trim()
+  );
+
+  if (agent) {
+    return res.json({
+      success: true,
+      employee_name: agent.employee_name
+    });
+  }
+
+  return res.status(401).json({
+    success: false,
+    message: "Invalid Agent ID or DOB ❌"
+  });
+});
 // Pincode search
 router.get("/pincode", (req, res) => {
   const { search } = req.query;
@@ -57,41 +103,75 @@ router.get("/pincode", (req, res) => {
 router.post("/customers", async (req, res) => {
   try {
     const {
-      customer_name, phone1, phone2, 
-      pincode, state, city, locality, address,
-      product, product_type,
-      warranty_status, svc_type,
+  agent_id,
+  agent_name, // ✅ ADD THIS
+  
+      customer_name,
+      phone1,
+      phone2,
+      pincode,
+      state,
+      city,
+      locality,
+      address,
+      product,
+      product_type,
+      serial_number,
+      model_number,
+      warranty_status,
+      svc_type,
       complaint_issue
     } = req.body;
 
-    console.log("Incoming:", req.body); // DEBUG
-
     const result = await pool.query(
       `INSERT INTO customers(
-        customer_name, phone1, phone2, 
-        pincode, state, city, locality, address,
-        product, product_type,
-        warranty_status, svc_type,
+        agent_id,
+        agent_name,
+        customer_name,
+        phone1,
+        phone2,
+        pincode,
+        state,
+        city,
+        locality,
+        address,
+        product,
+        product_type,
+        serial_number,
+        model_number,
+        warranty_status,
+        svc_type,
         complaint_issue
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
       RETURNING *`,
       [
-        customer_name, phone1, phone2, 
-        pincode, state, city, locality, address,
-        product, product_type,
-        warranty_status, svc_type,
+       agent_id,
+        agent_name,
+        customer_name,
+        phone1,
+        phone2,
+        pincode,
+        state,
+        city,
+        locality,
+        address,
+        product,
+        product_type,
+        serial_number,
+        model_number,
+        warranty_status,
+        svc_type,
         complaint_issue
       ]
     );
 
-
     res.json(result.rows[0]);
+
   } catch (err) {
     console.error("Insert Error:", err.message);
     res.status(500).json({ error: "Server error" });
   }
 });
-
 router.get("/customers", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM customers ORDER BY id DESC");
@@ -134,6 +214,8 @@ router.get("/customers/export", async (req, res) => {
     sheet.columns = [
       { header: "ID", key: "id", width: 10 },
       { header: "Customer Name", key: "customer_name", width: 25 },
+      { header: "Agent ID", key: "agent_id", width: 20 },
+      { header: "Agent Name", key: "agent_name", width: 25 },// ✅ ADD THIS
       { header: "Phone 1", key: "phone1", width: 20 },
       { header: "Phone 2", key: "phone2", width: 20 },
       { header: "Pincode", key: "pincode", width: 15 },
@@ -143,12 +225,17 @@ router.get("/customers/export", async (req, res) => {
       { header: "Address", key: "address", width: 30 },
       { header: "Product", key: "product", width: 20 },
       { header: "Product Type", key: "product_type", width: 25 },
+      { header: "Serial_Number", key: "serial_number", width: 25 },
+      { header: "Model_Number", key: "model_number", width: 25 },
       { header: "Warranty", key: "warranty_status", width: 20 },
       { header: "Service Type", key: "svc_type", width: 20 },
       { header: "Complaint", key: "complaint_issue", width: 30 }
     ];
 
     sheet.addRows(result.rows);
+
+    // ✅ IMPORTANT CHANGE
+    const buffer = await workbook.xlsx.writeBuffer();
 
     res.setHeader(
       "Content-Type",
@@ -160,13 +247,11 @@ router.get("/customers/export", async (req, res) => {
       "attachment; filename=customers.xlsx"
     );
 
-    await workbook.xlsx.write(res);
-    res.end();
+    res.send(buffer); // ✅ send buffer instead of stream
 
   } catch (err) {
-    console.error("Excel Export Error:", err);
-    res.status(500).json({ error: "Export failed" });
+    console.error("Excel Export FULL ERROR:", err);
+    res.status(500).json({ error: err.message });
   }
 });
-
 export default router;
