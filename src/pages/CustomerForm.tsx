@@ -30,7 +30,7 @@ const CustomerForm = () => {
   const [form, setForm] = useState({
     agent_id: creds.agent_id,   // ✅ FIXED
     password: creds.password,   // ✅ FIXED
-
+    agent_name: employeeName,
     customer_name: "",
     phone1: "",
     phone2: "",
