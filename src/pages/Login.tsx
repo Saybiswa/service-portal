@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "./Login.css";
 
 type LoginProps = {
   onLogin: () => void;
@@ -35,8 +36,10 @@ const handleLogin = async () => {
   }
 };
 
-  return (
-    <div>
+return (
+  <div className="login-page">
+    
+    <div className="login-left">
       <h2>Agent Login</h2>
 
       <input
@@ -54,7 +57,12 @@ const handleLogin = async () => {
 
       <button onClick={handleLogin}>Login</button>
     </div>
-  );
-};
 
+    <div className="login-right">
+      {/* optional: logo / image / branding */}
+    </div>
+
+  </div>
+);
+};
 export default Login;
