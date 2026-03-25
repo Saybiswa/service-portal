@@ -146,6 +146,7 @@ const CustomerForm = () => {
       // ✅ KEEP agent_id
       setForm(prev => ({
         ...prev,
+        agent_id:"",
         customer_name: "",
         phone1: "",
         phone2: "",
