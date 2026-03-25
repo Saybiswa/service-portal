@@ -142,7 +142,7 @@ router.post("/customers", async (req, res) => {
         warranty_status,
         svc_type,
         complaint_issue
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)
       RETURNING *`,
       [
        agent_id,
