@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import "./CustomerForm.css";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 
 const getAgentCredentials = () => {
   
@@ -23,7 +25,51 @@ const getAgentCredentials = () => {
   };
 };
 const CustomerForm = () => {
+  const navigate = useNavigate();
    const employeeName = localStorage.getItem("agent_name"); // ✅ FIX
+   const [timeLeft, setTimeLeft] = useState(3600); // 1 hour in seconds
+  
+  // ✅ ADD IT HERE 👇
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+
+    return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+  };
+// ✅ Logout
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/");
+  };
+  
+
+  // ✅ Auto Logout after 1 hour
+  useEffect(() => {
+  const loginTime = localStorage.getItem("login_time");
+
+  if (!loginTime) {
+    localStorage.setItem("login_time", Date.now().toString());
+  }
+
+  const interval = setInterval(() => {
+    const savedTime = localStorage.getItem("login_time");
+
+    if (savedTime) {
+      const diff = Math.floor((Date.now() - parseInt(savedTime)) / 1000);
+
+      const remaining = 3600 - diff; // 1 hour
+
+      if (remaining <= 0) {
+        alert("Session expired ⏳ Please login again");
+        handleLogout();
+      } else {
+        setTimeLeft(remaining);
+      }
+    }
+  }, 1000);
+
+  return () => clearInterval(interval);
+}, []);
 
   const creds = getAgentCredentials(); // ✅ GET BOTH VALUES
 
@@ -171,6 +217,13 @@ const CustomerForm = () => {
 
   return (
     <div className="page">
+       {/* ✅ Logout Button */}
+      <button className="logout-btn" onClick={handleLogout}>
+        Logout
+      </button>
+      <div className="session-timer">
+  ⏳ Session expires in: {formatTime(timeLeft)}
+</div>
       <div className="form-box">
         <h1>Customer Service Request Registration</h1>
       <h3 style={{ color: "#555", marginBottom: "10px" }}>
