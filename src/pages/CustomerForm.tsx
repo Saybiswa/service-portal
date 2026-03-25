@@ -240,7 +240,7 @@ const CustomerForm = () => {
             </div>
 
             <div className="input-row">
-              <label>Address</label>
+              <label>Complete Address<span className="required">*</span></label>
               <textarea name="address" value={form.address} onChange={handleChange}></textarea>
             </div>
           </div>
@@ -281,6 +281,8 @@ const CustomerForm = () => {
                 <option value="">Select</option>
                 <option>In warranty</option>
                 <option>Out of warranty</option>
+                <option>AMC(Extended Warrenty)</option>
+                <option>Pre Sale</option>
               </select>
             </div>
           </div>
