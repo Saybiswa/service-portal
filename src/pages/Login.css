@@ -1,0 +1,110 @@
+/* ===== GLOBAL BODY ===== */
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+/* ===== MAIN LOGIN CONTAINER ===== */
+.login-page {
+  width: 900px;
+  height: 800px;
+  display: flex;
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+
+/* ===== LEFT SIDE (FORM) ===== */
+.login-left {
+  flex: 1;
+  background: #ede7e7; /* light pink */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 50px;
+}
+
+.login-left h2 {
+  margin-bottom: 30px;
+  color: #111;
+  font-size: 26px;
+}
+
+
+/* INPUT FIELDS */
+.login-left input {
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  border-radius: 8px;
+  border: none;
+  background: #e5e7eb;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.login-left input:focus {
+  outline: none;
+  background: #fff;
+  box-shadow: 0 0 0 2px #eeeef1;
+}
+
+
+/* LOGIN BUTTON */
+.login-left button {
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #ef4444;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.login-left button:hover {
+  background: #dc2626;
+}
+
+
+/* ===== RIGHT SIDE ===== */
+.login-right {
+  flex: 1;
+  background: linear-gradient(135deg, #cb7979, #e53838);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+.login-right::before {
+  content: "Welcome to Request Backup Portal";
+  font-size: 22px;
+  font-weight: bold;
+  line-height: 1.4;
+}
+
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .login-page {
+    flex-direction: column;
+    width: 90%;
+    height: auto;
+  }
+
+  .login-right {
+    display: none;
+  }
+}
