@@ -213,9 +213,9 @@ router.get("/customers/export", async (req, res) => {
 
     sheet.columns = [
       { header: "ID", key: "id", width: 10 },
-      { header: "Customer Name", key: "customer_name", width: 25 },
       { header: "Agent ID", key: "agent_id", width: 20 },
       { header: "Agent Name", key: "agent_name", width: 25 },// ✅ ADD THIS
+      { header: "Customer Name", key: "customer_name", width: 25 },
       { header: "Phone 1", key: "phone1", width: 20 },
       { header: "Phone 2", key: "phone2", width: 20 },
       { header: "Pincode", key: "pincode", width: 15 },
