@@ -12,6 +12,33 @@ body {
   justify-content: center;
   padding: 5px;
 }
+.session-timer {
+  position: fixed;
+  top: 20px;
+  right: 120px;
+  background: #c8b6f7;
+  color: #171616;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.logout-btn {
+  position: fixed;
+  top: 20px;
+  right: 30px;
+  padding: 10px 18px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background: #dc2626;
+}
 
 /* Form Container */
 .form-box {

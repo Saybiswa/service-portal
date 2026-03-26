@@ -1,36 +1,74 @@
 import { useState, useEffect } from "react";
 import "./CustomerForm.css";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const getAgentCredentials = () => {
+
+const CustomerForm = () => {
+  const navigate = useNavigate();
+
+  // ✅ Get data from login
+  const agent_id = localStorage.getItem("agent_id") || "";
+  const employeeName = localStorage.getItem("agent_name");
+
+   //const employeeName = localStorage.getItem("agent_name"); // ✅ FIX
+   const [timeLeft, setTimeLeft] = useState(3600); // 1 hour in seconds
   
-  let agent_id = localStorage.getItem("agent_id");
-  let password = localStorage.getItem("agent_password");
+  // ✅ ADD IT HERE 👇
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
 
-  if (!agent_id || !password) {
-    agent_id = prompt("Enter Agent ID:") || "";
-    password = prompt("Enter Password:") || "";
+    return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+  };
+// ✅ Logout
+ const handleLogout = (e?: any) => {
+  if (e) e.preventDefault();
 
-    if (agent_id && password) {
-      localStorage.setItem("agent_id", agent_id);
-      localStorage.setItem("agent_password", password);
-    }
+  // ✅ Clear only auth-related data (better than clear all)
+  localStorage.removeItem("agent_id");
+  localStorage.removeItem("agent_name");
+  localStorage.removeItem("login_time");
+
+  // ✅ Redirect to login page
+  navigate("/", { replace: true });
+
+  // ✅ Hard reload to reset app completely (IMPORTANT)
+  window.location.reload();
+};
+  // ✅ Auto Logout after 1 hour
+  useEffect(() => {
+  const loginTime = localStorage.getItem("login_time");
+
+  if (!loginTime) {
+    localStorage.setItem("login_time", Date.now().toString());
   }
 
-  return {
-    agent_id: agent_id || "",
-    password: password || ""
-  };
-};
-const CustomerForm = () => {
-   const employeeName = localStorage.getItem("agent_name"); // ✅ FIX
+  const interval = setInterval(() => {
+    const savedTime = localStorage.getItem("login_time");
 
-  const creds = getAgentCredentials(); // ✅ GET BOTH VALUES
+    if (savedTime) {
+      const diff = Math.floor((Date.now() - parseInt(savedTime)) / 1000);
+
+      const remaining = 3600 - diff; // 1 hour
+
+      if (remaining <= 0) {
+        alert("Session expired ⏳ Please login again");
+        handleLogout();
+      } else {
+        setTimeLeft(remaining);
+      }
+    }
+  }, 1000);
+
+  return () => clearInterval(interval);
+}, []);
+
+
 
   const [form, setForm] = useState({
-    agent_id: creds.agent_id,   // ✅ FIXED
-    password: creds.password,   // ✅ FIXED
-
+    agent_id: agent_id,   // ✅ FIXED
+    agent_name: employeeName,
     customer_name: "",
     phone1: "",
     phone2: "",
@@ -117,9 +155,21 @@ const CustomerForm = () => {
 
   // ==========================
   // SUBMIT
-  // ==========================
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
+  // ==========================  
+const handleSubmit = async (e: any) => {
+  e.preventDefault();
+
+  const phoneRegex = /^[6-9][0-9]{9}$/;
+
+  if (!phoneRegex.test(form.phone1)) {
+    alert("Primary number must be valid (10 digits & start with 6-9) ❌");
+    return;
+  }
+
+  if (!phoneRegex.test(form.phone2)) {
+    alert("Alternative number must be valid (10 digits & start with 6-9) ❌");
+    return;
+  }
 
     if (
       !form.customer_name ||
@@ -171,6 +221,21 @@ const CustomerForm = () => {
 
   return (
     <div className="page">
+        {/* TOP BAR */}
+  <div className="top-bar">
+    <div className="session-timer">
+      ⏳ Session expires in: {formatTime(timeLeft)}
+    </div>
+
+    <button
+      type="button"
+      className="logout-btn"
+      onClick={handleLogout}
+    >
+      Logout
+    </button>
+  </div>
+
       <div className="form-box">
         <h1>Customer Service Request Registration</h1>
       <h3 style={{ color: "#555", marginBottom: "10px" }}>
@@ -240,7 +305,7 @@ const CustomerForm = () => {
             </div>
 
             <div className="input-row">
-              <label>Address</label>
+              <label>Complete Address<span className="required">*</span></label>
               <textarea name="address" value={form.address} onChange={handleChange}></textarea>
             </div>
           </div>
@@ -281,6 +346,8 @@ const CustomerForm = () => {
                 <option value="">Select</option>
                 <option>In warranty</option>
                 <option>Out of warranty</option>
+                <option>AMC(Extended Warrenty)</option>
+                <option>Pre Sale</option>
               </select>
             </div>
           </div>
@@ -305,7 +372,7 @@ const CustomerForm = () => {
 
           <button className="submit-btn">Submit</button>
         </form>
-      </div>
+        </div>
     </div>
   );
 };

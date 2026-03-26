@@ -3,9 +3,13 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  body {
+  margin: 0;
+
+  /* IMPORTANT: remove flex from body */
+
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -15,11 +19,11 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #c8c9de;
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: #c7a188;
 }
 
 body {
@@ -27,9 +31,7 @@ body {
   display: flex;
   place-items: center;
   min-width: 320px;
-  min-height: 100vh;
-}
-
+  min-height: 80vh;
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
@@ -47,7 +49,7 @@ button {
   transition: border-color 0.25s;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: #d8d9e7;
 }
 button:focus,
 button:focus-visible {
@@ -60,7 +62,7 @@ button:focus-visible {
     background-color: #ffffff;
   }
   a:hover {
-    color: #747bff;
+    color: #d9d9e3;
   }
   button {
     background-color: #f9f9f9;

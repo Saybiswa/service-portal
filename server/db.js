@@ -18,9 +18,12 @@ const pool = new Pool({
 
 export const createTable = async () => {
   try {
+    // 1️⃣ Create table if not exists
     await pool.query(`
       CREATE TABLE IF NOT EXISTS customers (
         id SERIAL PRIMARY KEY,
+        agent_id TEXT,
+        agent_name TEXT,
         customer_name TEXT,
         phone1 TEXT,
         phone2 TEXT,
@@ -31,17 +34,31 @@ export const createTable = async () => {
         address TEXT,
         product TEXT,
         product_type TEXT,
-        model_number TEXT,
         serial_number TEXT,
+        model_number TEXT,
         warranty_status TEXT,
         svc_type TEXT,
-        complaint_issue TEXT
-      );
+        complaint_issue TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
     `);
-    console.log("✅ Customers table ready");
+
+    // 2️⃣ Ensure missing columns are added (THIS IS THE REAL FIX)
+    await pool.query(`
+      ALTER TABLE customers 
+      ADD COLUMN IF NOT EXISTS agent_id TEXT;
+    `);
+
+    await pool.query(`
+      ALTER TABLE customers 
+      ADD COLUMN IF NOT EXISTS agent_name TEXT;
+    `);
+
+    console.log("✅ Customers table ready (with migrations)");
   } catch (err) {
     console.error("❌ Table creation error:", err.message);
   }
 };
+   
 
 export default pool;

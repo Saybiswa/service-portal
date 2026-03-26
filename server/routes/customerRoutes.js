@@ -142,7 +142,7 @@ router.post("/customers", async (req, res) => {
         warranty_status,
         svc_type,
         complaint_issue
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)
       RETURNING *`,
       [
        agent_id,
@@ -213,8 +213,8 @@ router.get("/customers/export", async (req, res) => {
 
     sheet.columns = [
       { header: "ID", key: "id", width: 10 },
+       { header: "Agent ID", key: "agent_id", width: 20 },
       { header: "Customer Name", key: "customer_name", width: 25 },
-      { header: "Agent ID", key: "agent_id", width: 20 },
       { header: "Agent Name", key: "agent_name", width: 25 },// ✅ ADD THIS
       { header: "Phone 1", key: "phone1", width: 20 },
       { header: "Phone 2", key: "phone2", width: 20 },
