@@ -185,13 +185,18 @@ router.get("/customers", async (req, res) => {
 // ==========================
 // DELETE ALL CUSTOMERS
 // ==========================
+// ==========================
+// DELETE ALL CUSTOMERS + RESET COUNT
+// ==========================
 router.delete("/customers/delete-all", async (req, res) => {
   try {
-    const result = await pool.query("DELETE FROM customers");
+    await pool.query("DELETE FROM customers");
+
+    // reset auto increment id
+    await pool.query("ALTER SEQUENCE customers_id_seq RESTART WITH 1");
 
     res.json({
-      message: "All customer data deleted successfully",
-      deletedRows: result.rowCount
+      message: "All customer data deleted & recount started successfully ✅"
     });
 
   } catch (err) {
